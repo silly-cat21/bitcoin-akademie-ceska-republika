@@ -1,6 +1,5 @@
 
-import Navbar from "@/components/layout/Navbar";
-import Footer from "@/components/layout/Footer";
+import PageLayout from "@/components/layout/PageLayout";
 import HeroSection from "@/components/sections/HeroSection";
 import CoursesSection from "@/components/sections/CoursesSection";
 import ToolsSection from "@/components/sections/ToolsSection";
@@ -15,17 +14,13 @@ const Index = () => {
   }, []);
 
   return (
-    <div className="min-h-screen flex flex-col">
-      <Navbar />
-      <main className="flex-1">
-        <HeroSection />
-        <CoursesSection />
-        <ToolsSection />
-        <MonetizationSection />
-        <NewsletterSection />
-      </main>
-      <Footer />
-    </div>
+    <PageLayout>
+      <HeroSection />
+      <CoursesSection />
+      <ToolsSection />
+      <MonetizationSection />
+      <NewsletterSection />
+    </PageLayout>
   );
 };
 
