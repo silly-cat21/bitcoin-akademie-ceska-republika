@@ -1,28 +1,33 @@
 
-import { Card, CardContent, CardDescription, CardFooter, CardHeader, CardTitle } from "@/components/ui/card";
+import { Card, CardDescription, CardFooter, CardHeader, CardTitle } from "@/components/ui/card";
 import { Button } from "@/components/ui/button";
 import { Calculator, Repeat, BarChart, Wallet, Lock, ExternalLink } from "lucide-react";
+import { Link } from "react-router-dom";
 
 const tools = [
   {
     title: "Bitcoin Kalkulačka",
     description: "Převádějte mezi BTC a CZK nebo EUR v reálném čase s aktuálními kurzy.",
     icon: Calculator,
+    path: "/nastroje/kalkulacka"
   },
   {
     title: "Konvertor jednotek",
     description: "Přepočítávejte mezi satoshi, bits, mBTC a BTC jednoduchým způsobem.",
     icon: Repeat,
+    path: "/nastroje/konvertor"
   },
   {
     title: "Cenový graf",
     description: "Interaktivní grafy cen Bitcoinu s historickými daty a technickými indikátory.",
     icon: BarChart,
+    path: "/nastroje/grafy"
   },
   {
     title: "Generátor peněženky",
     description: "Vytvořte si papírovou peněženku pro dlouhodobé a bezpečné uchovávání Bitcoinu.",
     icon: Wallet,
+    path: "/nastroje/penezenka"
   }
 ];
 
@@ -50,9 +55,11 @@ const ToolsSection = () => {
                 <CardDescription className="text-gray-600">{tool.description}</CardDescription>
               </CardHeader>
               <CardFooter>
-                <Button variant="outline" className="w-full border-bitcoin-orange text-bitcoin-orange hover:bg-bitcoin-orange hover:text-white">
-                  Použít nástroj
-                </Button>
+                <Link to={tool.path} className="w-full">
+                  <Button variant="outline" className="w-full border-bitcoin-orange text-bitcoin-orange hover:bg-bitcoin-orange hover:text-white">
+                    Použít nástroj
+                  </Button>
+                </Link>
               </CardFooter>
             </Card>
           ))}
@@ -65,9 +72,11 @@ const ToolsSection = () => {
               <p className="text-gray-600 mb-4">
                 Potřebujete prozkoumat transakce nebo adresy přímo na blockchainu? Využijte náš propojený blockchain explorer.
               </p>
-              <Button className="bg-bitcoin-orange text-white hover:bg-bitcoin-blue">
-                Otevřít Explorer <ExternalLink className="ml-2 h-4 w-4" />
-              </Button>
+              <Link to="/nastroje/explorer">
+                <Button className="bg-bitcoin-orange text-white hover:bg-bitcoin-blue">
+                  Otevřít Explorer <ExternalLink className="ml-2 h-4 w-4" />
+                </Button>
+              </Link>
             </div>
             <div className="relative w-full md:w-96 h-40 bg-gray-100 rounded-lg overflow-hidden flex items-center justify-center">
               <Lock className="h-16 w-16 text-gray-300" />

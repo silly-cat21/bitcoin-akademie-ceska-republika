@@ -1,8 +1,9 @@
 
-import { Card, CardContent, CardDescription, CardFooter, CardHeader, CardTitle } from "@/components/ui/card";
+import { Card, CardDescription, CardFooter, CardHeader, CardTitle } from "@/components/ui/card";
 import { Button } from "@/components/ui/button";
 import { Badge } from "@/components/ui/badge";
-import { Coins, Shield, ArrowRight, RefreshCw, BookOpen, Zap, LockKeyhole, BarChart3 } from "lucide-react";
+import { ArrowRight, BookOpen, Shield, BarChart3, Zap, Coins, LockKeyhole } from "lucide-react";
+import { Link } from "react-router-dom";
 
 const courseCategories = [
   {
@@ -11,7 +12,8 @@ const courseCategories = [
     icon: BookOpen,
     level: "Začátečník",
     color: "bg-green-100",
-    textColor: "text-green-800"
+    textColor: "text-green-800",
+    path: "/kurzy/zaklady"
   },
   {
     title: "Technická bezpečnost",
@@ -19,7 +21,8 @@ const courseCategories = [
     icon: Shield,
     level: "Středně pokročilý",
     color: "bg-blue-100",
-    textColor: "text-blue-800"
+    textColor: "text-blue-800",
+    path: "/kurzy/bezpecnost"
   },
   {
     title: "Trading & Investice",
@@ -27,7 +30,8 @@ const courseCategories = [
     icon: BarChart3,
     level: "Pokročilý",
     color: "bg-purple-100",
-    textColor: "text-purple-800"
+    textColor: "text-purple-800",
+    path: "/kurzy/investice"
   },
   {
     title: "Lightning Network",
@@ -35,15 +39,17 @@ const courseCategories = [
     icon: Zap,
     level: "Pokročilý",
     color: "bg-yellow-100",
-    textColor: "text-yellow-800"
+    textColor: "text-yellow-800",
+    path: "/kurzy/lightning"
   },
   {
     title: "Ekonomické principy",
-    description: "Pochopte monetární politiku a ekonomické důsledky Bitcoinu.",
+    description: "Pochopte monetární polit3iku a ekonomické důsledky Bitcoinu.",
     icon: Coins,
     level: "Středně pokročilý",
     color: "bg-red-100",
-    textColor: "text-red-800"
+    textColor: "text-red-800",
+    path: "/kurzy/ekonomie"
   },
   {
     title: "Soukromí v Bitcoinu",
@@ -51,7 +57,8 @@ const courseCategories = [
     icon: LockKeyhole,
     level: "Pokročilý",
     color: "bg-indigo-100",
-    textColor: "text-indigo-800"
+    textColor: "text-indigo-800",
+    path: "/kurzy/soukromi"
   }
 ];
 
@@ -82,19 +89,23 @@ const CoursesSection = () => {
                 <CardDescription className="text-gray-600">{course.description}</CardDescription>
               </CardHeader>
               <CardFooter>
-                <Button variant="ghost" className="text-bitcoin-orange hover:text-bitcoin-blue hover:bg-gray-100 p-0">
-                  Zobrazit kurzy
-                  <ArrowRight className="ml-2 h-4 w-4" />
-                </Button>
+                <Link to={course.path} className="w-full">
+                  <Button variant="ghost" className="text-bitcoin-orange hover:text-bitcoin-blue hover:bg-gray-100 p-0 w-full justify-start">
+                    Zobrazit kurz
+                    <ArrowRight className="ml-2 h-4 w-4" />
+                  </Button>
+                </Link>
               </CardFooter>
             </Card>
           ))}
         </div>
 
         <div className="text-center mt-12">
-          <Button className="bg-bitcoin-orange text-white hover:bg-bitcoin-blue">
-            Zobrazit všechny kurzy
-          </Button>
+          <Link to="/kurzy">
+            <Button className="bg-bitcoin-orange text-white hover:bg-bitcoin-blue">
+              Zobrazit všechny kurzy
+            </Button>
+          </Link>
         </div>
       </div>
     </div>

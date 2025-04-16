@@ -1,6 +1,7 @@
 
 import { Button } from "@/components/ui/button";
 import { ArrowRight } from "lucide-react";
+import { Link } from "react-router-dom";
 
 const HeroSection = () => {
   return (
@@ -15,13 +16,17 @@ const HeroSection = () => {
               Komplexní vzdělávání o Bitcoinu v českém jazyce. Kvalitní kurzy, praktické nástroje a komunita nadšenců.
             </p>
             <div className="flex flex-col sm:flex-row gap-4">
-              <Button className="bg-bitcoin-orange text-white hover:bg-bitcoin-blue px-8 py-6 text-lg">
-                Začít zdarma
-                <ArrowRight className="ml-2 h-5 w-5" />
-              </Button>
-              <Button variant="outline" className="border-bitcoin-blue text-bitcoin-blue hover:bg-bitcoin-blue hover:text-white px-8 py-6 text-lg">
-                Prozkoumat kurzy
-              </Button>
+              <Link to="/kurzy/zaklady">
+                <Button className="bg-bitcoin-orange text-white hover:bg-bitcoin-blue px-8 py-6 text-lg w-full sm:w-auto">
+                  Začít zdarma
+                  <ArrowRight className="ml-2 h-5 w-5" />
+                </Button>
+              </Link>
+              <Link to="/kurzy">
+                <Button variant="outline" className="border-bitcoin-blue text-bitcoin-blue hover:bg-bitcoin-blue hover:text-white px-8 py-6 text-lg w-full sm:w-auto">
+                  Prozkoumat kurzy
+                </Button>
+              </Link>
             </div>
           </div>
           <div className="md:w-1/2 flex justify-center">
