@@ -2,7 +2,7 @@
 import PageLayout from "@/components/layout/PageLayout";
 import { Card, CardContent, CardDescription, CardFooter, CardHeader, CardTitle } from "@/components/ui/card";
 import { Button } from "@/components/ui/button";
-import { Calculator, Repeat, BarChart, Wallet, Lock, ExternalLink } from "lucide-react";
+import { Calculator, Repeat, BarChart, Wallet, Lock, ExternalLink, Zap } from "lucide-react";
 import { Link } from "react-router-dom";
 
 const tools = [
@@ -23,6 +23,12 @@ const tools = [
     description: "Interaktivní grafy cen Bitcoinu s historickými daty a technickými indikátory.",
     icon: BarChart,
     path: "/nastroje/grafy"
+  },
+  {
+    title: "Lightning peněženky",
+    description: "Porovnání a hodnocení nejlepších Lightning Network peněženek.",
+    icon: Zap,
+    path: "/nastroje/lightning-wallets"
   },
   {
     title: "Generátor peněženky",
@@ -46,7 +52,7 @@ const Tools = () => {
             </p>
           </div>
 
-          <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-4 gap-6">
+          <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-6">
             {tools.map((tool, index) => (
               <Card key={index} className="hover:shadow-lg transition-shadow duration-300 h-full">
                 <CardHeader>

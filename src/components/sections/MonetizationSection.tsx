@@ -3,11 +3,11 @@ import { Card, CardContent, CardFooter, CardHeader, CardTitle } from "@/componen
 import { Button } from "@/components/ui/button";
 import { Check, CheckCircle, Star } from "lucide-react";
 
-// This section is temporarily hidden as requested
+// This section is completely hidden as requested
 const MonetizationSection = () => {
   return (
     <div className="hidden">
-      {/* Content temporarily hidden */}
+      {/* Content completely hidden */}
     </div>
   );
 };

@@ -1,7 +1,8 @@
 
 import { Button } from "@/components/ui/button";
-import { ArrowRight, Zap, Shield, BookOpen } from "lucide-react";
+import { ArrowRight, Zap, Shield, BookOpen, BarChart3, ChevronRight } from "lucide-react";
 import { Link } from "react-router-dom";
+import { motion } from "framer-motion";
 
 const HeroSection = () => {
   return (
@@ -13,7 +14,12 @@ const HeroSection = () => {
       
       <div className="container mx-auto px-4 relative z-10">
         <div className="flex flex-col md:flex-row items-center">
-          <div className="md:w-1/2 mb-10 md:mb-0 animate-fade-in">
+          <motion.div 
+            className="md:w-1/2 mb-10 md:mb-0"
+            initial={{ opacity: 0, y: 20 }}
+            animate={{ opacity: 1, y: 0 }}
+            transition={{ duration: 0.5 }}
+          >
             <h1 className="text-4xl md:text-5xl lg:text-6xl font-bold text-bitcoin-blue mb-6">
               Naučte se <span className="text-bitcoin-orange">Bitcoin</span> od základů
             </h1>
@@ -54,21 +60,77 @@ const HeroSection = () => {
                 <span className="text-gray-700">Praktické projekty</span>
               </div>
             </div>
-          </div>
-          <div className="md:w-1/2 flex justify-center relative">
+          </motion.div>
+          <motion.div 
+            className="md:w-1/2 flex justify-center relative"
+            initial={{ opacity: 0, scale: 0.9 }}
+            animate={{ opacity: 1, scale: 1 }}
+            transition={{ duration: 0.5, delay: 0.2 }}
+          >
             <div className="absolute -top-6 -left-6 w-64 h-64 bg-bitcoin-orange/10 rounded-full blur-3xl"></div>
             <div className="absolute -bottom-10 -right-10 w-72 h-72 bg-bitcoin-blue/10 rounded-full blur-3xl"></div>
             <div className="relative">
-              <div className="absolute -top-5 -left-5 w-20 h-20 bg-bitcoin-orange/20 rounded-lg rotate-12 animate-pulse"></div>
-              <div className="absolute -bottom-7 -right-7 w-28 h-28 bg-bitcoin-blue/20 rounded-lg -rotate-12 animate-pulse delay-300"></div>
+              <motion.div 
+                className="absolute -top-8 -left-8 w-28 h-28 bg-bitcoin-orange/20 rounded-lg"
+                animate={{ rotate: [0, 10, 0], y: [0, -10, 0] }}
+                transition={{ repeat: Infinity, duration: 5, ease: "easeInOut" }}
+              />
+              <motion.div 
+                className="absolute -bottom-10 -right-10 w-36 h-36 bg-bitcoin-blue/20 rounded-lg"
+                animate={{ rotate: [0, -10, 0], y: [0, 10, 0] }}
+                transition={{ repeat: Infinity, duration: 7, ease: "easeInOut", delay: 0.5 }}
+              />
               <img 
-                src="https://images.unsplash.com/photo-1639322537228-f710d846310a?ixlib=rb-4.0.3&auto=format&fit=crop&w=800&q=80" 
+                src="https://images.unsplash.com/photo-1518546305927-5a555bb7020d?ixlib=rb-4.0.3&auto=format&fit=crop&w=800&q=80" 
                 alt="Bitcoin ilustrace" 
-                className="w-full h-auto rounded-2xl shadow-xl relative z-10 animate-float border-4 border-white" 
+                className="w-full h-auto rounded-2xl shadow-xl relative z-10 border-4 border-white" 
               />
             </div>
-          </div>
+          </motion.div>
         </div>
+        
+        <motion.div 
+          className="mt-16 pt-8 border-t border-gray-200"
+          initial={{ opacity: 0, y: 20 }}
+          animate={{ opacity: 1, y: 0 }}
+          transition={{ duration: 0.5, delay: 0.4 }}
+        >
+          <h2 className="text-2xl font-bold text-bitcoin-blue mb-6 text-center">
+            Nejnovější nástroje a kurzy
+          </h2>
+          <div className="grid grid-cols-1 md:grid-cols-2 gap-6">
+            <Link to="/nastroje/lightning-wallets" className="block">
+              <div className="bg-white rounded-xl p-6 shadow-sm hover:shadow-md transition-all flex border border-gray-100">
+                <div className="mr-4 bg-bitcoin-orange/10 p-3 rounded-lg">
+                  <Zap className="h-8 w-8 text-bitcoin-orange" />
+                </div>
+                <div>
+                  <h3 className="font-bold text-lg text-bitcoin-blue">Lightning Peněženky</h3>
+                  <p className="text-gray-600 mb-2">Porovnání a hodnocení nejlepších Lightning peněženek</p>
+                  <div className="flex items-center text-bitcoin-orange text-sm">
+                    Prozkoumat nástroj
+                    <ChevronRight className="h-4 w-4 ml-1" />
+                  </div>
+                </div>
+              </div>
+            </Link>
+            <Link to="/kurzy/lightning" className="block">
+              <div className="bg-white rounded-xl p-6 shadow-sm hover:shadow-md transition-all flex border border-gray-100">
+                <div className="mr-4 bg-bitcoin-blue/10 p-3 rounded-lg">
+                  <BarChart3 className="h-8 w-8 text-bitcoin-blue" />
+                </div>
+                <div>
+                  <h3 className="font-bold text-lg text-bitcoin-blue">Lightning Network Kurz</h3>
+                  <p className="text-gray-600 mb-2">Naučte se používat a provozovat Lightning Network</p>
+                  <div className="flex items-center text-bitcoin-orange text-sm">
+                    Zobrazit kurz
+                    <ChevronRight className="h-4 w-4 ml-1" />
+                  </div>
+                </div>
+              </div>
+            </Link>
+          </div>
+        </motion.div>
       </div>
     </div>
   );

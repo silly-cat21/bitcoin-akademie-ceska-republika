@@ -23,6 +23,7 @@ import UnitConverter from "./pages/tools/UnitConverter";
 import PriceChart from "./pages/tools/PriceChart";
 import WalletGenerator from "./pages/tools/WalletGenerator";
 import BlockchainExplorer from "./pages/tools/BlockchainExplorer";
+import LightningWallets from "./pages/tools/LightningWallets";
 
 // Info pages
 import AboutUs from "./pages/AboutUs";
@@ -61,6 +62,7 @@ const App = () => (
           <Route path="/nastroje/grafy" element={<PriceChart />} />
           <Route path="/nastroje/penezenka" element={<WalletGenerator />} />
           <Route path="/nastroje/explorer" element={<BlockchainExplorer />} />
+          <Route path="/nastroje/lightning-wallets" element={<LightningWallets />} />
           
           {/* Info Routes */}
           <Route path="/o-nas" element={<AboutUs />} />
