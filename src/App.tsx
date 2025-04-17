@@ -11,6 +11,7 @@ import NotFound from "./pages/NotFound";
 import Courses from "./pages/Courses";
 import BasicsCourse from "./pages/courses/BasicsCourse";
 import SecurityCourse from "./pages/courses/SecurityCourse";
+import SecurityCourseLessons from "./pages/courses/SecurityCourseLessons";
 import TradingCourse from "./pages/courses/TradingCourse";
 import LightningCourse from "./pages/courses/LightningCourse";
 import EconomicsCourse from "./pages/courses/EconomicsCourse";
@@ -50,6 +51,7 @@ const App = () => (
           <Route path="/kurzy" element={<Courses />} />
           <Route path="/kurzy/zaklady" element={<BasicsCourse />} />
           <Route path="/kurzy/bezpecnost" element={<SecurityCourse />} />
+          <Route path="/kurzy/bezpecnost/lekce/:lessonId" element={<SecurityCourseLessons />} />
           <Route path="/kurzy/investice" element={<TradingCourse />} />
           <Route path="/kurzy/lightning" element={<LightningCourse />} />
           <Route path="/kurzy/ekonomie" element={<EconomicsCourse />} />

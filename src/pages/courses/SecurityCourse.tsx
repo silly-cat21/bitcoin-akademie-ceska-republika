@@ -1,7 +1,9 @@
 
 import { useEffect } from "react";
+import { Link } from "react-router-dom";
 import PageLayout from "@/components/layout/PageLayout";
 import { Shield, PlayCircle, FileText } from "lucide-react";
+import { Button } from "@/components/ui/button";
 import CourseHeader from "@/components/courses/CourseHeader";
 import CourseContent from "@/components/courses/CourseContent";
 import CourseDetailsSidebar from "@/components/courses/CourseDetailsSidebar";
@@ -116,10 +118,22 @@ const SecurityCourse = () => {
               level={{ color: "blue-500", text: "Středně pokročilý" }}
               duration="7 lekcí (450 minut)"
               format="Video lekce, praktické workshopy, testy"
+              ctaText="Začít kurz"
+              ctaSubtext="K dispozici v Premium členství"
             />
           </div>
 
-          <CourseLessonList lessons={lessons} typeIcons={typeIcons} />
+          <div className="mb-12">
+            <h2 className="text-2xl font-bold text-bitcoin-blue mb-6">Přehled lekcí</h2>
+            <CourseLessonList lessons={lessons} typeIcons={typeIcons} />
+            <div className="flex justify-center mt-8">
+              <Link to="/kurzy/bezpecnost/lekce/1">
+                <Button className="bg-bitcoin-orange hover:bg-bitcoin-orange/90 text-white px-8 py-6 text-lg shadow-md hover:shadow-lg transition-all duration-300">
+                  Začít kurz zdarma
+                </Button>
+              </Link>
+            </div>
+          </div>
 
           <CourseRecommendation
             title="Doporučené hardwarové peněženky"
