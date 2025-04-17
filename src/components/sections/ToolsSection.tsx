@@ -1,7 +1,6 @@
-
 import { Card, CardDescription, CardFooter, CardHeader, CardTitle } from "@/components/ui/card";
 import { Button } from "@/components/ui/button";
-import { Calculator, Repeat, BarChart, Wallet, Lock, ExternalLink, Zap } from "lucide-react";
+import { Calculator, Repeat, BarChart, Wallet, Lock, ExternalLink, Zap, Share2 } from "lucide-react";
 import { Link } from "react-router-dom";
 
 const tools = [
@@ -34,6 +33,12 @@ const tools = [
     description: "Vytvořte si papírovou peněženku pro dlouhodobé a bezpečné uchovávání Bitcoinu.",
     icon: Wallet,
     path: "/nastroje/penezenka"
+  },
+  {
+    title: "Konvertor adres",
+    description: "Převádějte mezi různými formáty Bitcoin adres (Legacy, SegWit, Taproot).",
+    icon: Share2,
+    path: "/nastroje/address-converter"
   }
 ];
 

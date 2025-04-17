@@ -1,4 +1,3 @@
-
 import { Toaster } from "@/components/ui/toaster";
 import { Toaster as Sonner } from "@/components/ui/sonner";
 import { TooltipProvider } from "@/components/ui/tooltip";
@@ -25,6 +24,7 @@ import PriceChart from "./pages/tools/PriceChart";
 import WalletGenerator from "./pages/tools/WalletGenerator";
 import BlockchainExplorer from "./pages/tools/BlockchainExplorer";
 import LightningWallets from "./pages/tools/LightningWallets";
+import AddressConverter from "./pages/tools/AddressConverter";
 
 // Info pages
 import AboutUs from "./pages/AboutUs";
@@ -65,6 +65,7 @@ const App = () => (
           <Route path="/nastroje/penezenka" element={<WalletGenerator />} />
           <Route path="/nastroje/explorer" element={<BlockchainExplorer />} />
           <Route path="/nastroje/lightning-wallets" element={<LightningWallets />} />
+          <Route path="/nastroje/address-converter" element={<AddressConverter />} />
           
           {/* Info Routes */}
           <Route path="/o-nas" element={<AboutUs />} />
