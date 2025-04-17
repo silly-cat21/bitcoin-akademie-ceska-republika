@@ -1,12 +1,10 @@
-
 import { useEffect } from "react";
 import { Link } from "react-router-dom";
 import PageLayout from "@/components/layout/PageLayout";
-import { Zap, Check, Smartphone, Globe, Server, ShieldCheck, Cpu, ExternalLink } from "lucide-react";
-import { Tabs, TabsContent, TabsList, TabsTrigger } from "@/components/ui/tabs";
-import { Card, CardContent, CardDescription, CardFooter, CardHeader, CardTitle } from "@/components/ui/card";
+import { Zap } from "lucide-react";
 import { Button } from "@/components/ui/button";
-import { Badge } from "@/components/ui/badge";
+import WalletTabs from "@/components/wallets/WalletTabs";
+import WalletComparisonInfo from "@/components/wallets/WalletComparisonInfo";
 
 const wallets = [
   {
@@ -95,73 +93,6 @@ const wallets = [
   }
 ];
 
-type WalletType = (typeof wallets)[0];
-
-const WalletCard = ({ wallet }: { wallet: WalletType }) => {
-  return (
-    <Card className="h-full flex flex-col hover:shadow-md transition-shadow">
-      <CardHeader className="pb-2">
-        <div className="flex justify-between items-start">
-          <CardTitle className="text-xl font-bold text-bitcoin-blue">{wallet.name}</CardTitle>
-          <Badge variant={wallet.custodial ? "destructive" : "default"}>
-            {wallet.custodial ? "Custodial" : "Non-custodial"}
-          </Badge>
-        </div>
-        <CardDescription className="text-sm">{wallet.description}</CardDescription>
-      </CardHeader>
-      <CardContent className="py-2 flex-grow">
-        <div className="aspect-video mb-4 overflow-hidden rounded-md bg-gray-100">
-          <img src={wallet.imageUrl} alt={wallet.name} className="w-full h-full object-cover" />
-        </div>
-        
-        <div className="mb-4">
-          <p className="text-sm text-gray-500 flex items-center mb-1">
-            <Globe className="h-4 w-4 mr-2 text-bitcoin-orange" />
-            <span><strong>Vývojář:</strong> {wallet.developer}</span>
-          </p>
-          <p className="text-sm text-gray-500 flex items-center mb-1">
-            <Smartphone className="h-4 w-4 mr-2 text-bitcoin-orange" />
-            <span><strong>Platformy:</strong> {wallet.platforms.join(", ")}</span>
-          </p>
-          <p className="text-sm text-gray-500 flex items-center">
-            <ShieldCheck className="h-4 w-4 mr-2 text-bitcoin-orange" />
-            <span><strong>Hodnocení:</strong> {wallet.rating}/5</span>
-          </p>
-        </div>
-        
-        <div className="flex flex-wrap gap-1 mb-4">
-          {wallet.tags.map((tag, i) => (
-            <Badge key={i} variant="outline" className="text-xs">
-              {tag}
-            </Badge>
-          ))}
-        </div>
-        
-        <div className="space-y-4">
-          <div>
-            <h4 className="text-sm font-medium mb-2 flex items-center">
-              <Zap className="h-4 w-4 mr-1 text-bitcoin-orange" /> Klíčové funkce
-            </h4>
-            <ul className="text-sm space-y-1">
-              {wallet.features.slice(0, 3).map((feature, i) => (
-                <li key={i} className="flex items-start">
-                  <Check className="h-4 w-4 mr-2 text-green-500 shrink-0 mt-0.5" />
-                  <span>{feature}</span>
-                </li>
-              ))}
-            </ul>
-          </div>
-        </div>
-      </CardContent>
-      <CardFooter className="pt-2">
-        <Button variant="outline" className="w-full border-bitcoin-orange text-bitcoin-orange hover:bg-bitcoin-orange hover:text-white">
-          Zobrazit detaily
-        </Button>
-      </CardFooter>
-    </Card>
-  );
-};
-
 const LightningWallets = () => {
   useEffect(() => {
     document.title = "Lightning Peněženky | Bitcoin Akademie";
@@ -180,92 +111,8 @@ const LightningWallets = () => {
           </p>
         </div>
 
-        <Tabs defaultValue="all" className="mb-12">
-          <div className="flex justify-center mb-6">
-            <TabsList>
-              <TabsTrigger value="all">Všechny</TabsTrigger>
-              <TabsTrigger value="beginners">Pro začátečníky</TabsTrigger>
-              <TabsTrigger value="advanced">Pro pokročilé</TabsTrigger>
-              <TabsTrigger value="non-custodial">Non-custodial</TabsTrigger>
-            </TabsList>
-          </div>
-          
-          <TabsContent value="all">
-            <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-6">
-              {wallets.map((wallet) => (
-                <WalletCard key={wallet.id} wallet={wallet} />
-              ))}
-            </div>
-          </TabsContent>
-          
-          <TabsContent value="beginners">
-            <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-6">
-              {wallets.filter(w => w.tags.includes("začátečníci")).map((wallet) => (
-                <WalletCard key={wallet.id} wallet={wallet} />
-              ))}
-            </div>
-          </TabsContent>
-          
-          <TabsContent value="advanced">
-            <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-6">
-              {wallets.filter(w => w.tags.includes("pokročilí") || w.tags.includes("experti")).map((wallet) => (
-                <WalletCard key={wallet.id} wallet={wallet} />
-              ))}
-            </div>
-          </TabsContent>
-          
-          <TabsContent value="non-custodial">
-            <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-6">
-              {wallets.filter(w => !w.custodial).map((wallet) => (
-                <WalletCard key={wallet.id} wallet={wallet} />
-              ))}
-            </div>
-          </TabsContent>
-        </Tabs>
-
-        <div className="bg-white p-6 md:p-8 rounded-xl shadow-sm mb-12">
-          <h2 className="text-2xl font-bold text-bitcoin-blue mb-4">Custodial vs. Non-custodial: Jaký je rozdíl?</h2>
-          <div className="grid grid-cols-1 md:grid-cols-2 gap-8">
-            <div>
-              <h3 className="text-lg font-semibold mb-2 flex items-center">
-                <Server className="h-5 w-5 mr-2 text-red-500" />
-                Custodial peněženky
-              </h3>
-              <p className="text-gray-700 mb-3">
-                U custodial peněženek spravuje vaše prostředky třetí strana. To znamená, že nemáte plnou kontrolu nad svými bitcoiny.
-              </p>
-              <div className="space-y-2">
-                <p className="text-sm flex items-start">
-                  <Check className="h-4 w-4 mr-2 text-green-500 shrink-0 mt-0.5" />
-                  <span><strong>Výhody:</strong> Jednoduché používání, žádná správa záloh, okamžité platby</span>
-                </p>
-                <p className="text-sm flex items-start text-red-700">
-                  <Check className="h-4 w-4 mr-2 text-red-500 shrink-0 mt-0.5" />
-                  <span><strong>Nevýhody:</strong> "Not your keys, not your coins", riziko hacků, závislost na třetí straně</span>
-                </p>
-              </div>
-            </div>
-            <div>
-              <h3 className="text-lg font-semibold mb-2 flex items-center">
-                <Cpu className="h-5 w-5 mr-2 text-green-500" />
-                Non-custodial peněženky
-              </h3>
-              <p className="text-gray-700 mb-3">
-                U non-custodial peněženek máte plnou kontrolu nad svými bitcoiny. Pouze vy vlastníte privátní klíče.
-              </p>
-              <div className="space-y-2">
-                <p className="text-sm flex items-start">
-                  <Check className="h-4 w-4 mr-2 text-green-500 shrink-0 mt-0.5" />
-                  <span><strong>Výhody:</strong> Plná kontrola, vyšší bezpečnost, větší soukromí</span>
-                </p>
-                <p className="text-sm flex items-start text-red-700">
-                  <Check className="h-4 w-4 mr-2 text-red-500 shrink-0 mt-0.5" />
-                  <span><strong>Nevýhody:</strong> Složitější použití, nutnost zálohování, větší zodpovědnost uživatele</span>
-                </p>
-              </div>
-            </div>
-          </div>
-        </div>
+        <WalletTabs wallets={wallets} />
+        <WalletComparisonInfo />
 
         <div className="text-center">
           <h2 className="text-2xl font-bold text-bitcoin-blue mb-4">Chcete se naučit víc o Lightning Network?</h2>
@@ -273,7 +120,7 @@ const LightningWallets = () => {
             Podívejte se na náš kompletní kurz o Lightning Network, kde vás provedeme od základů až po pokročilé koncepty.
           </p>
           <Button className="bg-bitcoin-orange text-white hover:bg-bitcoin-blue">
-            <Link className="flex items-center" to="/kurzy/lightning">
+            <Link to="/kurzy/lightning">
               Zobrazit Lightning kurz
               <Zap className="ml-2 h-4 w-4" />
             </Link>
