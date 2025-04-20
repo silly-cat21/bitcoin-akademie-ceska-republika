@@ -8,6 +8,9 @@ import { Tabs, TabsContent, TabsList, TabsTrigger } from "@/components/ui/tabs";
 import { Search, ExternalLink, Copy, Info, Check, AlertTriangle, Clock } from "lucide-react";
 import { useToast } from "@/hooks/use-toast";
 
+// Base URL for the Mempool API
+const MEMPOOL_API_BASE_URL = "https://mempool.space/api";
+
 const BlockchainExplorer = () => {
   const { toast } = useToast();
   const [searchQuery, setSearchQuery] = useState("");
@@ -17,82 +20,40 @@ const BlockchainExplorer = () => {
   const [addressData, setAddressData] = useState<any>(null);
   const [txData, setTxData] = useState<any>(null);
   const [blockData, setBlockData] = useState<any>(null);
+  const [networkStats, setNetworkStats] = useState<any>(null);
 
-  const mockAddressData = {
-    address: "bc1qxy2kgdygjrsqtzq2n0yrf2493p83kkfjhx0wlh",
-    balance: 2.34567891,
-    totalReceived: 15.67890123,
-    totalSent: 13.33322232,
-    transactionCount: 47,
-    transactions: [
-      {
-        txid: "a1075db55d416d3ca199f55b6084e2115b9345e16c5cf302fc80e9d5fbf5d48d",
-        amount: 0.05231456,
-        timestamp: "2023-11-23T14:22:31Z",
-        confirmations: 3254,
-        type: "received"
-      },
-      {
-        txid: "7f2b89b7f6016d2b67d5b39d69a78c5a3c0d3d2a1f0e4c5b6a7d8e9f0a1b2c3d",
-        amount: 0.12345678,
-        timestamp: "2023-11-15T09:45:12Z",
-        confirmations: 4589,
-        type: "sent"
-      },
-      {
-        txid: "3a2b1c0d4e5f6a7b8c9d0e1f2a3b4c5d6e7f8a9b0c1d2e3f4a5b6c7d8e9f0a1",
-        amount: 1.23456789,
-        timestamp: "2023-10-28T18:33:45Z",
-        confirmations: 7821,
-        type: "received"
+  // Fetch network statistics on component mount
+  useEffect(() => {
+    fetchNetworkStats();
+  }, []);
+
+  const fetchNetworkStats = async () => {
+    try {
+      const [blockchainResponse, difficultyResponse] = await Promise.all([
+        fetch(`${MEMPOOL_API_BASE_URL}/v1/blocks/tip/height`),
+        fetch(`${MEMPOOL_API_BASE_URL}/v1/difficulty-adjustment`)
+      ]);
+
+      if (!blockchainResponse.ok || !difficultyResponse.ok) {
+        throw new Error("Failed to fetch network stats");
       }
-    ]
+
+      const blockHeight = await blockchainResponse.text();
+      const difficultyData = await difficultyResponse.json();
+
+      setNetworkStats({
+        height: parseInt(blockHeight),
+        difficulty: difficultyData.difficulty,
+        hashrate: difficultyData.currentHashrate,
+        avgBlockTime: difficultyData.timeAvg
+      });
+    } catch (err) {
+      console.error("Error fetching network stats:", err);
+      // Don't show error toast for background fetch
+    }
   };
 
-  const mockTxData = {
-    txid: "a1075db55d416d3ca199f55b6084e2115b9345e16c5cf302fc80e9d5fbf5d48d",
-    blockHeight: 767123,
-    confirmations: 3254,
-    timestamp: "2023-11-23T14:22:31Z",
-    size: 225,
-    weight: 900,
-    fee: 0.00005431,
-    status: "confirmed",
-    inputs: [
-      {
-        address: "3FZbgi29cpjq2GjdwV8eyHuJJnkLtktZc5",
-        value: 0.1234567
-      }
-    ],
-    outputs: [
-      {
-        address: "bc1qxy2kgdygjrsqtzq2n0yrf2493p83kkfjhx0wlh",
-        value: 0.05231456
-      },
-      {
-        address: "bc1q7cyrfmck2ffu2ud3rn5l5a8yv6f0chkp0zpemf",
-        value: 0.07108783
-      }
-    ]
-  };
-
-  const mockBlockData = {
-    hash: "000000000000000000024bead8df69990852c202db0e0097c1a12ea637d7e96d",
-    height: 767123,
-    timestamp: "2023-11-23T14:20:12Z",
-    nonce: 3851918760,
-    difficulty: 53911173001054.59,
-    merkleRoot: "07a43723b7bc67f8b99ec3df72c4ddb51f58861fd0c022cd9da148124786bbdd",
-    version: "0x2000e000",
-    bits: "17053894",
-    size: 1327405,
-    weight: 3993416,
-    transactionCount: 2876,
-    miner: "AntPool",
-    reward: 6.25
-  };
-
-  const handleSearch = (e: React.FormEvent) => {
+  const handleSearch = async (e: React.FormEvent) => {
     e.preventDefault();
     setError("");
     
@@ -103,46 +64,224 @@ const BlockchainExplorer = () => {
     
     setLoading(true);
     
-    // Simulate API call delay
-    setTimeout(() => {
-      try {
-        // Check if it's a block height (only numbers)
-        if (/^\d+$/.test(searchQuery)) {
-          setActiveTab("block");
-          setBlockData(mockBlockData);
-          setAddressData(null);
-          setTxData(null);
-        }
-        // Check if it might be a transaction hash (64 char hex)
-        else if (/^[a-fA-F0-9]{64}$/.test(searchQuery)) {
-          setActiveTab("transaction");
-          setTxData(mockTxData);
-          setAddressData(null);
-          setBlockData(null);
-        }
-        // Assume it's an address
-        else {
-          setActiveTab("address");
-          setAddressData(mockAddressData);
-          setTxData(null);
-          setBlockData(null);
-        }
-        
-        toast({
-          title: "Vyhledávání dokončeno",
-          description: "Data byla úspěšně načtena.",
-        });
-      } catch (err) {
-        setError("Nepodařilo se načíst data. Zkontrolujte prosím zadaný dotaz.");
-        toast({
-          title: "Chyba při vyhledávání",
-          description: "Nepodařilo se načíst data. Zkontrolujte prosím zadaný dotaz.",
-          variant: "destructive",
-        });
-      } finally {
-        setLoading(false);
+    try {
+      // Check if it's a block height (only numbers)
+      if (/^\d+$/.test(searchQuery)) {
+        await fetchBlockData(searchQuery);
       }
-    }, 1500);
+      // Check if it might be a transaction hash (64 char hex)
+      else if (/^[a-fA-F0-9]{64}$/.test(searchQuery)) {
+        await fetchTransactionData(searchQuery);
+      }
+      // Assume it's an address
+      else {
+        await fetchAddressData(searchQuery);
+      }
+      
+      toast({
+        title: "Vyhledávání dokončeno",
+        description: "Data byla úspěšně načtena.",
+      });
+    } catch (err: any) {
+      setError(err.message || "Nepodařilo se načíst data. Zkontrolujte prosím zadaný dotaz.");
+      toast({
+        title: "Chyba při vyhledávání",
+        description: err.message || "Nepodařilo se načíst data. Zkontrolujte prosím zadaný dotaz.",
+        variant: "destructive",
+      });
+    } finally {
+      setLoading(false);
+    }
+  };
+
+  const fetchAddressData = async (address: string) => {
+    try {
+      const [addressResponse, txsResponse] = await Promise.all([
+        fetch(`${MEMPOOL_API_BASE_URL}/address/${address}`),
+        fetch(`${MEMPOOL_API_BASE_URL}/address/${address}/txs`)
+      ]);
+
+      if (!addressResponse.ok || !txsResponse.ok) {
+        throw new Error("Adresa nenalezena nebo došlo k chybě při načítání dat");
+      }
+
+      const addressInfo = await addressResponse.json();
+      const transactions = await txsResponse.json();
+
+      // Process the first 10 transactions
+      const processedTxs = transactions.slice(0, 10).map((tx: any) => {
+        // Calculate if this is a received or sent transaction
+        // This is simplified logic - in reality, more complex calculation would be needed
+        const received = tx.vout.some((out: any) => out.scriptpubkey_address === address);
+        
+        // Calculate the amount (simplified)
+        let amount = 0;
+        if (received) {
+          amount = tx.vout
+            .filter((out: any) => out.scriptpubkey_address === address)
+            .reduce((sum: number, out: any) => sum + out.value, 0) / 100000000;
+        } else {
+          const inputsFromAddress = tx.vin.some((input: any) => 
+            input.prevout && input.prevout.scriptpubkey_address === address
+          );
+          
+          if (inputsFromAddress) {
+            amount = tx.vin
+              .filter((input: any) => input.prevout && input.prevout.scriptpubkey_address === address)
+              .reduce((sum: number, input: any) => sum + input.prevout.value, 0) / 100000000;
+          }
+        }
+
+        return {
+          txid: tx.txid,
+          amount: amount,
+          timestamp: new Date(tx.status.block_time * 1000).toISOString(),
+          confirmations: tx.status.confirmed ? networkStats.height - tx.status.block_height + 1 : 0,
+          type: received ? 'received' : 'sent'
+        };
+      });
+
+      // Format the address data
+      const formattedData = {
+        address: address,
+        balance: addressInfo.chain_stats.funded_txo_sum / 100000000 - addressInfo.chain_stats.spent_txo_sum / 100000000,
+        totalReceived: addressInfo.chain_stats.funded_txo_sum / 100000000,
+        totalSent: addressInfo.chain_stats.spent_txo_sum / 100000000,
+        transactionCount: addressInfo.chain_stats.tx_count,
+        transactions: processedTxs
+      };
+
+      setAddressData(formattedData);
+      setTxData(null);
+      setBlockData(null);
+      setActiveTab("address");
+    } catch (error) {
+      console.error("Error fetching address data:", error);
+      throw new Error("Nepodařilo se načíst data adresy. Zkontrolujte, zda je adresa platná.");
+    }
+  };
+
+  const fetchTransactionData = async (txid: string) => {
+    try {
+      const response = await fetch(`${MEMPOOL_API_BASE_URL}/tx/${txid}`);
+      
+      if (!response.ok) {
+        throw new Error("Transakce nenalezena nebo došlo k chybě při načítání dat");
+      }
+      
+      const txInfo = await response.json();
+      
+      // Calculate fee
+      const inputSum = txInfo.vin.reduce((sum: number, input: any) => 
+        sum + (input.prevout ? input.prevout.value : 0), 0
+      );
+      const outputSum = txInfo.vout.reduce((sum: number, output: any) => sum + output.value, 0);
+      const fee = (inputSum - outputSum) / 100000000;
+
+      // Format inputs
+      const inputs = txInfo.vin.map((input: any) => ({
+        address: input.prevout ? input.prevout.scriptpubkey_address : 'Coinbase',
+        value: input.prevout ? input.prevout.value / 100000000 : 0
+      }));
+
+      // Format outputs
+      const outputs = txInfo.vout.map((output: any) => ({
+        address: output.scriptpubkey_address || 'OP_RETURN',
+        value: output.value / 100000000
+      }));
+
+      // Format the transaction data
+      const formattedData = {
+        txid: txInfo.txid,
+        blockHeight: txInfo.status.block_height || 'Unconfirmed',
+        confirmations: txInfo.status.confirmed ? networkStats.height - txInfo.status.block_height + 1 : 0,
+        timestamp: txInfo.status.block_time ? new Date(txInfo.status.block_time * 1000).toISOString() : new Date().toISOString(),
+        size: txInfo.size,
+        weight: txInfo.weight,
+        fee: fee,
+        status: txInfo.status.confirmed ? 'confirmed' : 'unconfirmed',
+        inputs: inputs,
+        outputs: outputs
+      };
+
+      setTxData(formattedData);
+      setAddressData(null);
+      setBlockData(null);
+      setActiveTab("transaction");
+    } catch (error) {
+      console.error("Error fetching transaction data:", error);
+      throw new Error("Nepodařilo se načíst data transakce. Zkontrolujte, zda je hash transakce platný.");
+    }
+  };
+
+  const fetchBlockData = async (height: string) => {
+    try {
+      // First get the block hash from height
+      const hashResponse = await fetch(`${MEMPOOL_API_BASE_URL}/block-height/${height}`);
+      
+      if (!hashResponse.ok) {
+        throw new Error("Blok nenalezen nebo došlo k chybě při načítání dat");
+      }
+      
+      const blockHash = await hashResponse.text();
+      
+      // Then get the block details using the hash
+      const blockResponse = await fetch(`${MEMPOOL_API_BASE_URL}/block/${blockHash}`);
+      
+      if (!blockResponse.ok) {
+        throw new Error("Nepodařilo se načíst detaily bloku");
+      }
+      
+      const blockInfo = await blockResponse.json();
+      
+      // Format the block data
+      const formattedData = {
+        hash: blockInfo.id,
+        height: blockInfo.height,
+        timestamp: new Date(blockInfo.timestamp * 1000).toISOString(),
+        nonce: blockInfo.nonce,
+        difficulty: blockInfo.difficulty,
+        merkleRoot: blockInfo.merkle_root,
+        version: `0x${blockInfo.version.toString(16)}`,
+        bits: blockInfo.bits,
+        size: blockInfo.size,
+        weight: blockInfo.weight,
+        transactionCount: blockInfo.tx_count,
+        miner: getMinerFromCoinbaseText(blockInfo.extras?.coinbase_text || "Unknown"),
+        reward: 6.25 // This should be calculated based on block height
+      };
+
+      setBlockData(formattedData);
+      setAddressData(null);
+      setTxData(null);
+      setActiveTab("block");
+    } catch (error) {
+      console.error("Error fetching block data:", error);
+      throw new Error("Nepodařilo se načíst data bloku. Zkontrolujte, zda je výška bloku platná.");
+    }
+  };
+
+  // Helper function to identify miners from coinbase text
+  const getMinerFromCoinbaseText = (coinbaseText: string): string => {
+    const minerSignatures: Record<string, string> = {
+      "/Antpool/": "AntPool",
+      "/F2Pool/": "F2Pool",
+      "/Poolin/": "Poolin",
+      "/ViaBTC/": "ViaBTC",
+      "/Foundry/": "Foundry USA",
+      "/Binance/": "Binance Pool",
+      "/SlushPool/": "SlushPool",
+      "/MARA/": "Marathon",
+      "/SBI/": "SBI Crypto"
+    };
+
+    for (const [signature, miner] of Object.entries(minerSignatures)) {
+      if (coinbaseText.includes(signature.replace(/\//g, ""))) {
+        return miner;
+      }
+    }
+
+    return "Unknown";
   };
 
   const copyToClipboard = (text: string) => {
@@ -296,9 +435,15 @@ const BlockchainExplorer = () => {
                       </div>
                     </CardContent>
                     <CardFooter className="flex justify-center">
-                      <Button variant="outline" className="border-bitcoin-orange text-bitcoin-orange hover:bg-bitcoin-orange hover:text-white">
-                        Zobrazit všechny transakce
-                      </Button>
+                      <a 
+                        href={`https://mempool.space/cs/address/${addressData.address}`} 
+                        target="_blank" 
+                        rel="noopener noreferrer"
+                      >
+                        <Button variant="outline" className="border-bitcoin-orange text-bitcoin-orange hover:bg-bitcoin-orange hover:text-white">
+                          Zobrazit na Mempool.space <ExternalLink className="ml-2 h-4 w-4" />
+                        </Button>
+                      </a>
                     </CardFooter>
                   </Card>
                 )}
@@ -360,12 +505,14 @@ const BlockchainExplorer = () => {
                               <div className="flex items-center justify-between mb-2">
                                 <div className="flex items-center">
                                   <span className="font-mono text-sm truncate max-w-xs">{input.address}</span>
-                                  <button 
-                                    onClick={() => copyToClipboard(input.address)} 
-                                    className="ml-2 text-gray-400 hover:text-gray-700"
-                                  >
-                                    <Copy className="h-4 w-4" />
-                                  </button>
+                                  {input.address !== 'Coinbase' && (
+                                    <button 
+                                      onClick={() => copyToClipboard(input.address)} 
+                                      className="ml-2 text-gray-400 hover:text-gray-700"
+                                    >
+                                      <Copy className="h-4 w-4" />
+                                    </button>
+                                  )}
                                 </div>
                                 <span className="font-medium">{input.value} BTC</span>
                               </div>
@@ -382,12 +529,14 @@ const BlockchainExplorer = () => {
                               <div className="flex items-center justify-between mb-2">
                                 <div className="flex items-center">
                                   <span className="font-mono text-sm truncate max-w-xs">{output.address}</span>
-                                  <button 
-                                    onClick={() => copyToClipboard(output.address)} 
-                                    className="ml-2 text-gray-400 hover:text-gray-700"
-                                  >
-                                    <Copy className="h-4 w-4" />
-                                  </button>
+                                  {output.address !== 'OP_RETURN' && (
+                                    <button 
+                                      onClick={() => copyToClipboard(output.address)} 
+                                      className="ml-2 text-gray-400 hover:text-gray-700"
+                                    >
+                                      <Copy className="h-4 w-4" />
+                                    </button>
+                                  )}
                                 </div>
                                 <span className="font-medium">{output.value} BTC</span>
                               </div>
@@ -397,14 +546,17 @@ const BlockchainExplorer = () => {
                       </div>
                     </CardContent>
                     <CardFooter className="flex justify-center">
-                      <Button variant="outline" className="border-bitcoin-orange text-bitcoin-orange hover:bg-bitcoin-orange hover:text-white mr-4">
-                        <ExternalLink className="h-4 w-4 mr-2" />
-                        Zobrazit raw transakci
-                      </Button>
-                      <Button variant="outline" className="border-bitcoin-orange text-bitcoin-orange hover:bg-bitcoin-orange hover:text-white">
-                        <ExternalLink className="h-4 w-4 mr-2" />
-                        Zobrazit v Mempoolu
-                      </Button>
+                      <a 
+                        href={`https://mempool.space/cs/tx/${txData.txid}`} 
+                        target="_blank" 
+                        rel="noopener noreferrer"
+                        className="mr-4"
+                      >
+                        <Button variant="outline" className="border-bitcoin-orange text-bitcoin-orange hover:bg-bitcoin-orange hover:text-white">
+                          <ExternalLink className="h-4 w-4 mr-2" />
+                          Zobrazit na Mempool.space
+                        </Button>
+                      </a>
                     </CardFooter>
                   </Card>
                 )}
@@ -482,14 +634,17 @@ const BlockchainExplorer = () => {
                       </div>
                     </CardContent>
                     <CardFooter className="flex justify-center">
-                      <Button variant="outline" className="border-bitcoin-orange text-bitcoin-orange hover:bg-bitcoin-orange hover:text-white mr-4">
-                        <ExternalLink className="h-4 w-4 mr-2" />
-                        Zobrazit transakce v bloku
-                      </Button>
-                      <Button variant="outline" className="border-bitcoin-orange text-bitcoin-orange hover:bg-bitcoin-orange hover:text-white">
-                        <ExternalLink className="h-4 w-4 mr-2" />
-                        Zobrazit v Mempoolu
-                      </Button>
+                      <a 
+                        href={`https://mempool.space/cs/block/${blockData.hash}`} 
+                        target="_blank" 
+                        rel="noopener noreferrer"
+                        className="mr-4"
+                      >
+                        <Button variant="outline" className="border-bitcoin-orange text-bitcoin-orange hover:bg-bitcoin-orange hover:text-white">
+                          <ExternalLink className="h-4 w-4 mr-2" />
+                          Zobrazit na Mempool.space
+                        </Button>
+                      </a>
                     </CardFooter>
                   </Card>
                 )}
@@ -536,7 +691,7 @@ const BlockchainExplorer = () => {
                 <div className="mt-4 flex items-center p-3 bg-yellow-50 text-yellow-800 rounded-md">
                   <Info className="h-5 w-5 mr-2 flex-shrink-0" />
                   <p className="text-sm">
-                    Náš explorer je integrován s mnoha veřejnými Bitcoin API a poskytuje data v reálném čase.
+                    Náš explorer využívá veřejné Mempool API pro zobrazení dat v reálném čase přímo z Bitcoinové sítě.
                   </p>
                 </div>
               </CardContent>
@@ -555,24 +710,36 @@ const BlockchainExplorer = () => {
                 <div className="grid grid-cols-2 md:grid-cols-4 gap-4 mb-4">
                   <div>
                     <p className="text-sm text-gray-500">Aktuální výška</p>
-                    <p className="text-lg font-bold text-bitcoin-blue">767,430</p>
+                    <p className="text-lg font-bold text-bitcoin-blue">{networkStats?.height || "Načítání..."}</p>
                   </div>
                   <div>
                     <p className="text-sm text-gray-500">Hash rate</p>
-                    <p className="text-lg font-bold text-bitcoin-blue">385.4 EH/s</p>
+                    <p className="text-lg font-bold text-bitcoin-blue">
+                      {networkStats ? `${(networkStats.hashrate / 1e18).toFixed(1)} EH/s` : "Načítání..."}
+                    </p>
                   </div>
                   <div>
                     <p className="text-sm text-gray-500">Průměrný čas bloku</p>
-                    <p className="text-lg font-bold text-bitcoin-blue">9.48 min</p>
+                    <p className="text-lg font-bold text-bitcoin-blue">
+                      {networkStats ? `${(networkStats.avgBlockTime / 60).toFixed(2)} min` : "Načítání..."}
+                    </p>
                   </div>
                   <div>
                     <p className="text-sm text-gray-500">Obtížnost</p>
-                    <p className="text-lg font-bold text-bitcoin-blue">53.91 T</p>
+                    <p className="text-lg font-bold text-bitcoin-blue">
+                      {networkStats ? `${(networkStats.difficulty / 1e12).toFixed(2)} T` : "Načítání..."}
+                    </p>
                   </div>
                 </div>
-                <Button variant="outline" className="border-bitcoin-orange text-bitcoin-orange hover:bg-bitcoin-orange hover:text-white">
-                  Zobrazit více statistik
-                </Button>
+                <a 
+                  href="https://mempool.space/cs/mining" 
+                  target="_blank" 
+                  rel="noopener noreferrer"
+                >
+                  <Button variant="outline" className="border-bitcoin-orange text-bitcoin-orange hover:bg-bitcoin-orange hover:text-white">
+                    Zobrazit více statistik <ExternalLink className="ml-2 h-4 w-4" />
+                  </Button>
+                </a>
               </div>
             </div>
           </div>
