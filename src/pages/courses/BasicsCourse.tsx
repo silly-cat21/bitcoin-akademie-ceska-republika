@@ -1,5 +1,5 @@
-
 import { useEffect } from "react";
+import { Link } from "react-router-dom";
 import PageLayout from "@/components/layout/PageLayout";
 import { BookOpen, PlayCircle, FileText } from "lucide-react";
 import CourseHeader from "@/components/courses/CourseHeader";
@@ -7,6 +7,7 @@ import CourseContent from "@/components/courses/CourseContent";
 import CourseDetailsSidebar from "@/components/courses/CourseDetailsSidebar";
 import CourseLessonList from "@/components/courses/CourseLessonList";
 import CourseRecommendation from "@/components/courses/CourseRecommendation";
+import { Button } from "@/components/ui/button";
 
 const lessons = [
   {
@@ -135,11 +136,22 @@ const BasicsCourse = () => {
               </ul>
             </CourseContent>
 
-            <CourseDetailsSidebar
-              level={{ color: "green-500", text: "Začátečník" }}
-              duration="7 lekcí (420 minut)"
-              format="Video lekce, praktické workshopy, testy"
-            />
+            <div className="md:col-span-1">
+              <CourseDetailsSidebar
+                level={{ color: "green-500", text: "Začátečník" }}
+                duration="7 lekcí (420 minut)"
+                format="Video lekce, praktické workshopy, testy"
+                ctaText="Začít kurz"
+                ctaSubtext="Vyzkoušejte první lekci zdarma"
+              />
+              <div className="mt-4">
+                <Link to="/kurzy/zaklady/lekce/1" className="w-full">
+                  <Button className="w-full bg-bitcoin-orange text-white hover:bg-bitcoin-blue">
+                    Spustit první lekci
+                  </Button>
+                </Link>
+              </div>
+            </div>
           </div>
 
           <CourseLessonList lessons={lessons} typeIcons={typeIcons} />

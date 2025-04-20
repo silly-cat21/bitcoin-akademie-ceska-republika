@@ -15,6 +15,7 @@ import TradingCourse from "./pages/courses/TradingCourse";
 import LightningCourse from "./pages/courses/LightningCourse";
 import EconomicsCourse from "./pages/courses/EconomicsCourse";
 import PrivacyCourse from "./pages/courses/PrivacyCourse";
+import BasicCourseLessons from "./pages/courses/BasicCourseLessons";
 
 // Tool pages
 import Tools from "./pages/Tools";
@@ -50,6 +51,7 @@ const App = () => (
           {/* Course Routes */}
           <Route path="/kurzy" element={<Courses />} />
           <Route path="/kurzy/zaklady" element={<BasicsCourse />} />
+          <Route path="/kurzy/zaklady/lekce/:lessonId" element={<BasicCourseLessons />} />
           <Route path="/kurzy/bezpecnost" element={<SecurityCourse />} />
           <Route path="/kurzy/bezpecnost/lekce/:lessonId" element={<SecurityCourseLessons />} />
           <Route path="/kurzy/investice" element={<TradingCourse />} />
